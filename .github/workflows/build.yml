@@ -8,33 +8,46 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     steps:
-      - name: Checkout
+      - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 1
+          lfs: false
 
-      - name: Setup Java
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Java
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Flet
-        run: pip install "flet[all]"
-
       - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools'
+          accept-android-sdk-licenses: true
+
+      - name: Accept Android SDK Licenses
+        run: yes | sdkmanager --licenses || true
+
+      - name: Install Python Dependencies
         run: |
-          mkdir -p $ANDROID_HOME/licenses
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2" > /dev/null 2>&1 || true
+          python -m pip install --upgrade pip
+          pip install "flet[all]"
+          pip install -r requirements.txt
 
       - name: Build APK
-        run: flet build apk --yes --verbose
+        run: |
+          git config --global --add safe.directory '*'
+          flet build apk --yes --verbose
         env:
           CI: true
           FLET_CLI_NO_RICH_OUTPUT: "1"
