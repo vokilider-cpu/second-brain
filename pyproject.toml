@@ -1,0 +1,8 @@
+[project]
+name = "second-brain"
+version = "1.0.0"
+
+[tool.flet]
+product = "Second Brain"
+org = "com.example.secondbrain"
+bundle_id = "com.example.secondbrain"
