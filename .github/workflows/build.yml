@@ -13,36 +13,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 1. Устанавливаем Java (необходим для Android)
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # 2. Устанавливаем Python для Flet
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # 3. Устанавливаем Android SDK с автоматическим принятием лицензий
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          accept-android-sdk-licenses: true
-
-      # 4. Устанавливаем Flet
       - name: Install Flet
         run: pip install "flet[all]"
 
-      # 5. Собираем APK
+      # Этот шаг решает проблему с лицензиями
+      - name: Setup Android SDK with Licenses
+        run: |
+          mkdir -p $ANDROID_SDK_ROOT/licenses
+          echo -e "\n8933bad161af4b6a5b573652ffc7aaf3aee85a47" > $ANDROID_SDK_ROOT/licenses/android-sdk-license
+          echo -e "\nd56f5187479451eabf01fb78af6dfcb131b33910" > $ANDROID_SDK_ROOT/licenses/android-sdk-preview-license
+          echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_SDK_ROOT/licenses/google-tv-preview-license
+
       - name: Build APK
         run: flet build apk --yes --verbose
         env:
           CI: true
 
-      # 6. Сохраняем готовый APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
