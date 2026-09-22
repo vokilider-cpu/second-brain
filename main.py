@@ -109,7 +109,7 @@ def main(page: ft.Page):
     page.add(
         ft.Text("🧠 Второй мозг", size=30, weight=ft.FontWeight.BOLD),
         status,
-        ft.ElevatedButton("📁 Добавить PDF/DOCX",
+        ft.Button("📁 Добавить PDF/DOCX", ...),
                           icon=ft.Icons.UPLOAD_FILE,
                           on_click=lambda _: picker.pick_files(
                               allowed_extensions=["pdf", "docx"])),
