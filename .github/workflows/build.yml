@@ -24,6 +24,10 @@ jobs:
         with:
           python-version: '3.11'
 
+      # Этот шаг устанавливает Android SDK и принимает лицензии автоматически
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Install Flet
         run: pip install "flet[all]"
 
@@ -31,7 +35,6 @@ jobs:
         run: flet build apk --yes --verbose
         env:
           CI: true
-          FLET_ANDROID_ACCEPT_LICENSES: "true"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
