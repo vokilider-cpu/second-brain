@@ -24,21 +24,20 @@ jobs:
         with:
           python-version: '3.11'
 
-      # Принимаем лицензии Android SDK (без установки самого SDK)
-      - name: Accept Android SDK Licenses
+      - name: Install Flet
+        run: pip install "flet[all]"
+
+      - name: Setup Android SDK
         run: |
           mkdir -p $ANDROID_HOME/licenses
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
-          mkdir -p $HOME/.android
-          touch $HOME/.android/repositories.cfg
-
-      - name: Install Flet
-        run: pip install "flet[all]"
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2" > /dev/null 2>&1 || true
 
       - name: Build APK
         run: flet build apk --yes --verbose
         env:
           CI: true
+          FLET_CLI_NO_RICH_OUTPUT: "1"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
