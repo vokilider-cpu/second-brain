@@ -28,7 +28,7 @@ jobs:
         run: pip install "flet[all]"
 
       - name: Build APK
-        run: flet build apk --yes --verbose
+        run: flet build apk --yes --verbose --android-accept-licenses
         env:
           CI: true
 
