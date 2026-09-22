@@ -24,9 +24,13 @@ jobs:
         with:
           python-version: '3.11'
 
-      # Этот шаг устанавливает Android SDK и принимает лицензии автоматически
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      # Принимаем лицензии Android SDK (без установки самого SDK)
+      - name: Accept Android SDK Licenses
+        run: |
+          mkdir -p $ANDROID_HOME/licenses
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
+          mkdir -p $HOME/.android
+          touch $HOME/.android/repositories.cfg
 
       - name: Install Flet
         run: pip install "flet[all]"
